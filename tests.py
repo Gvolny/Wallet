@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 import os
 from io import StringIO
+from decimal import Decimal
 
 from wallet import FinancialManager
 
@@ -22,14 +23,14 @@ class TestFinancialManager(unittest.TestCase):
                 "ID": "1",
                 "Дата": "2024-01-01",
                 "Категория": "Доход",
-                "Сумма": "1000",
+                "Сумма": "1000.00",
                 "Описание": "Test income 1",
             },
             {
                 "ID": "2",
                 "Дата": "2024-01-02",
                 "Категория": "Расход",
-                "Сумма": "500",
+                "Сумма": "500.00",
                 "Описание": "Test expense 1",
             },
         ]
@@ -50,14 +51,14 @@ class TestFinancialManager(unittest.TestCase):
                 "ID": "1",
                 "Дата": "2024-01-01",
                 "Категория": "Доход",
-                "Сумма": "1000",
+                "Сумма": Decimal("1000.00"),
                 "Описание": "Test income 1",
             },
             {
                 "ID": "2",
                 "Дата": "2024-01-02",
                 "Категория": "Расход",
-                "Сумма": "500",
+                "Сумма": Decimal("500.00"),
                 "Описание": "Test expense 1",
             },
         ]
@@ -74,13 +75,13 @@ class TestFinancialManager(unittest.TestCase):
     def test_add_expense(self):
         # Test adding a new expense record
         last_id = self.financial_manager.get_last_id()
-        self.financial_manager.add_expense("2024-05-10", "200", "Test expense", last_id)
+        self.financial_manager.add_expense("2024-05-10", Decimal("200.00"), "Test expense", last_id)
         self.assertEqual(len(self.financial_manager.records), 1)
 
     def test_add_income(self):
         # Test adding a new income record
         last_id = self.financial_manager.get_last_id()
-        self.financial_manager.add_income("2024-05-10", "500", "Test income", last_id)
+        self.financial_manager.add_income("2024-05-10", Decimal("500.00"), "Test income", last_id)
         self.assertEqual(len(self.financial_manager.records), 1)
 
     def test_search_by_category(self):
@@ -90,14 +91,14 @@ class TestFinancialManager(unittest.TestCase):
                 "ID": "1",
                 "Дата": "2024-01-01",
                 "Категория": "Доход",
-                "Сумма": "1000",
+                "Сумма": Decimal("1000.00"),
                 "Описание": "Test income 1",
             },
             {
                 "ID": "2",
                 "Дата": "2024-01-02",
                 "Категория": "Расход",
-                "Сумма": "500",
+                "Сумма": Decimal("500.00"),
                 "Описание": "Test expense 1",
             },
         ]
@@ -114,14 +115,14 @@ class TestFinancialManager(unittest.TestCase):
                 "ID": "1",
                 "Дата": "2024-01-01",
                 "Категория": "Доход",
-                "Сумма": "1000",
+                "Сумма": Decimal("1000.00"),
                 "Описание": "Test income 1",
             },
             {
                 "ID": "2",
                 "Дата": "2024-01-02",
                 "Категория": "Расход",
-                "Сумма": "500",
+                "Сумма": Decimal("500.00"),
                 "Описание": "Test expense 1",
             },
         ]
@@ -140,14 +141,14 @@ class TestFinancialManager(unittest.TestCase):
                 "ID": "1",
                 "Дата": "2024-01-01",
                 "Категория": "Доход",
-                "Сумма": "1000",
+                "Сумма": Decimal("1000.00"),
                 "Описание": "Test income 1",
             },
             {
                 "ID": "2",
                 "Дата": "2024-01-02",
                 "Категория": "Расход",
-                "Сумма": "500",
+                "Сумма": Decimal("500.00"),
                 "Описание": "Test expense 1",
             },
         ]
@@ -164,21 +165,21 @@ class TestFinancialManager(unittest.TestCase):
                 "ID": "1",
                 "Дата": "2024-01-01",
                 "Категория": "Доход",
-                "Сумма": "1000",
+                "Сумма": Decimal("1000.00"),
                 "Описание": "Test income 1",
             },
             {
                 "ID": "2",
                 "Дата": "2024-01-02",
                 "Категория": "Расход",
-                "Сумма": "500",
+                "Сумма": Decimal("500.00"),
                 "Описание": "Test expense 1",
             },
         ]
         self.financial_manager.records = test_records
 
         # Test searching by amount
-        amount_results = self.financial_manager.search_by_amount(1000)
+        amount_results = self.financial_manager.search_by_amount(Decimal("1000.00"))
         self.assertEqual(len(amount_results), 1)
 
     def test_edit_record(self):
@@ -188,14 +189,14 @@ class TestFinancialManager(unittest.TestCase):
                 "ID": "1",
                 "Дата": "2024-01-01",
                 "Категория": "Доход",
-                "Сумма": "1000",
+                "Сумма": Decimal("1000.00"),
                 "Описание": "Test income 1",
             },
             {
                 "ID": "2",
                 "Дата": "2024-01-02",
                 "Категория": "Расход",
-                "Сумма": "500",
+                "Сумма": Decimal("500.00"),
                 "Описание": "Test expense 1",
             },
         ]
@@ -203,10 +204,11 @@ class TestFinancialManager(unittest.TestCase):
 
         # Test editing a record
         self.financial_manager.edit_record(
-            "1", "2024-01-01", "1500", "Updated income 1"
+            "1", "2024-01-01", Decimal("1500.00"), "Updated income 1"
         )
         edited_record = self.financial_manager.records[0]
-        self.assertEqual(edited_record["Сумма"], "1500")
+        edited_amount = Decimal(edited_record["Сумма"])  # Convert to Decimal
+        self.assertEqual(edited_amount, Decimal("1500.00"))
         self.assertEqual(edited_record["Описание"], "Updated income 1")
 
     @patch("sys.stdout", new_callable=StringIO)
@@ -217,14 +219,14 @@ class TestFinancialManager(unittest.TestCase):
                 "ID": "1",
                 "Дата": "2024-01-01",
                 "Категория": "Доход",
-                "Сумма": "1000",
+                "Сумма": Decimal("1000.00"),
                 "Описание": "Test income 1",
             },
             {
                 "ID": "2",
                 "Дата": "2024-01-02",
                 "Категория": "Расход",
-                "Сумма": "500",
+                "Сумма": Decimal("500.00"),
                 "Описание": "Test expense 1",
             },
         ]
@@ -242,14 +244,14 @@ class TestFinancialManager(unittest.TestCase):
                 "ID": "1",
                 "Дата": "2024-01-01",
                 "Категория": "Доход",
-                "Сумма": "1000",
+                "Сумма": Decimal("1000.00"),
                 "Описание": "Test income 1",
             },
             {
                 "ID": "2",
                 "Дата": "2024-01-02",
                 "Категория": "Расход",
-                "Сумма": "500",
+                "Сумма": Decimal("500.00"),
                 "Описание": "Test expense 1",
             },
         ]

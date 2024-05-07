@@ -1,8 +1,11 @@
 import argparse
 import os
 import sys
+from decimal import Decimal, getcontext
 from typing import List, Dict
 
+# Set decimal precision globally
+getcontext().prec = 2
 
 class FinancialRecord:
     """
@@ -12,12 +15,12 @@ class FinancialRecord:
         record_id (str): The unique identifier of the record.
         date (str): The date of the financial transaction.
         category (str): The category of the transaction (e.g., "Доход", "Расход").
-        amount (str): The amount of money involved in the transaction.
+        amount (Decimal): The amount of money involved in the transaction.
         description (str): A description of the transaction.
     """
 
     def __init__(
-        self, record_id: str, date: str, category: str, amount: str, description: str
+        self, record_id: str, date: str, category: str, amount: Decimal, description: str
     ):
         self.record_id = record_id
         self.date = date
@@ -71,7 +74,7 @@ class FinancialManager:
                 file.write("\n")
 
     def edit_record(
-        self, record_id: str, new_date: str, new_amount: str, new_description: str
+        self, record_id: str, new_date: str, new_amount: Decimal, new_description: str
     ):
         """
         Edits an existing financial record.
@@ -79,13 +82,13 @@ class FinancialManager:
         Args:
             record_id (str): The ID of the record to be edited.
             new_date (str): The new date for the record.
-            new_amount (str): The new amount for the record.
+            new_amount (Decimal): The new amount for the record.
             new_description (str): The new description for the record.
         """
         for record in self.records:
             if record["ID"] == record_id:
                 record["Дата"] = new_date
-                record["Сумма"] = new_amount
+                record["Сумма"] = str(new_amount)
                 record["Описание"] = new_description
                 break
 
@@ -94,27 +97,27 @@ class FinancialManager:
         Displays the current balance.
         """
         total_income = sum(
-            float(record["Сумма"])
+            Decimal(record["Сумма"])
             for record in self.records
             if record["Категория"] == "Доход"
         )
         total_expense = sum(
-            float(record["Сумма"])
+            Decimal(record["Сумма"])
             for record in self.records
             if record["Категория"] == "Расход"
         )
         balance = total_income - total_expense
-        print(f"Текущий баланс: {balance}")
-        print(f"Доходы: {total_income}")
-        print(f"Расходы: {total_expense}")
+        print(f"Текущий баланс: {balance:.2f}")
+        print(f"Доходы: {total_income:.2f}")
+        print(f"Расходы: {total_expense:.2f}")
 
-    def add_expense(self, date: str, amount: str, description: str, last_id: int):
+    def add_expense(self, date: str, amount: Decimal, description: str, last_id: int):
         """
         Adds a new expense record.
 
         Args:
             date (str): The date of the expense.
-            amount (str): The amount of the expense.
+            amount (Decimal): The amount of the expense.
             description (str): The description of the expense.
             last_id (int): The ID of the last record.
         """
@@ -122,18 +125,18 @@ class FinancialManager:
             "ID": str(last_id + 1),
             "Дата": date,
             "Категория": "Расход",
-            "Сумма": amount,
+            "Сумма": f"{amount:.2f}",
             "Описание": description,
         }
         self.records.append(new_record)
 
-    def add_income(self, date: str, amount: str, description: str, last_id: int):
+    def add_income(self, date: str, amount: Decimal, description: str, last_id: int):
         """
         Adds a new income record.
 
         Args:
             date (str): The date of the income.
-            amount (str): The amount of the income.
+            amount (Decimal): The amount of the income.
             description (str): The description of the income.
             last_id (int): The ID of the last record.
         """
@@ -141,7 +144,7 @@ class FinancialManager:
             "ID": str(last_id + 1),
             "Дата": date,
             "Категория": "Доход",
-            "Сумма": amount,
+            "Сумма": f"{amount:.2f}",
             "Описание": description,
         }
         self.records.append(new_record)
@@ -182,17 +185,17 @@ class FinancialManager:
         """
         return [record for record in self.records if record["Дата"] == date]
 
-    def search_by_amount(self, amount: float) -> List[Dict[str, str]]:
+    def search_by_amount(self, amount: Decimal) -> List[Dict[str, str]]:
         """
         Searches for records by amount.
 
         Args:
-            amount (float): The amount to search for.
+            amount (Decimal): The amount to search for.
 
         Returns:
             List[Dict[str, str]]: A list of matching records.
         """
-        return [record for record in self.records if float(record["Сумма"]) == amount]
+        return [record for record in self.records if Decimal(record["Сумма"]) == amount]
 
     def get_last_id(self) -> int:
         """
@@ -215,10 +218,10 @@ class FinancialManager:
             self.display_balance()
         elif args.add_expense:
             date, amount, description = args.add_expense
-            self.add_expense(date, amount, description, last_id)
+            self.add_expense(date, Decimal(amount), description, last_id)
         elif args.add_income:
             date, amount, description = args.add_income
-            self.add_income(date, amount, description, last_id)
+            self.add_income(date, Decimal(amount), description, last_id)
         elif args.search_category:
             category_results = self.search_by_category(args.search_category)
             for result in category_results:
@@ -228,7 +231,7 @@ class FinancialManager:
             for result in date_results:
                 print(result)
         elif args.search_amount:
-            amount_results = self.search_by_amount(float(args.search_amount))
+            amount_results = self.search_by_amount(Decimal(args.search_amount))
             for result in amount_results:
                 print(result)
         elif args.search_description:
@@ -237,7 +240,7 @@ class FinancialManager:
                 print(result)
         elif args.edit:
             record_id, new_date, new_amount, new_description = args.edit
-            self.edit_record(record_id, new_date, new_amount, new_description)
+            self.edit_record(record_id, new_date, Decimal(new_amount), new_description)
 
 
 def parse_args() -> argparse.Namespace:
