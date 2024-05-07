@@ -1,4 +1,4 @@
-# Personal Finance Manager
+# Personal Wallet
 
 A simple Python program for managing personal finances.
 
@@ -16,10 +16,10 @@ This project provides a command-line interface (CLI) for managing personal finan
 ## Installation
 
 1. Clone the repository:
-`git clone https://github.com/your-username/personal-finance-manager.git`
+`git clone https://github.com/Gvolny/Wallet`
 
 2. Navigate to the project directory:
-`cd personal-finance-manager`
+`cd Wallet`
 
 
 ## Usage
@@ -46,6 +46,23 @@ To run the tests and see coverage, execute:
 
 `coverage report -m`
 
+## Example Data File
+
+An example of a data file (`example.txt`) might look like this:
+
+```
+ID: 1
+Дата: 2024-01-01
+Категория: Доход
+Сумма: 1000
+Описание: Заработная плата
+
+ID: 2
+Дата: 2024-01-02
+Категория: Расход
+Сумма: 500
+Описание: Покупка продуктов
+```
 
 ## License
 
