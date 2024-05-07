@@ -1,10 +1,22 @@
 import argparse
 import os
 import sys
+from typing import List, Dict
 
 
 class FinancialRecord:
-    def __init__(self, record_id, date, category, amount, description):
+    """
+    Represents a single financial record.
+
+    Attributes:
+        record_id (str): The unique identifier of the record.
+        date (str): The date of the financial transaction.
+        category (str): The category of the transaction (e.g., "Доход", "Расход").
+        amount (str): The amount of money involved in the transaction.
+        description (str): A description of the transaction.
+    """
+
+    def __init__(self, record_id: str, date: str, category: str, amount: str, description: str):
         self.record_id = record_id
         self.date = date
         self.category = category
@@ -13,11 +25,25 @@ class FinancialRecord:
 
 
 class FinancialManager:
-    def __init__(self, filename):
+    """
+    Manages financial records and operations.
+
+    Attributes:
+        filename (str): The name of the file to store financial records.
+        records (List[Dict[str, str]]): A list of financial records.
+    """
+
+    def __init__(self, filename: str):
         self.filename = filename
         self.records = self.read_records()
 
-    def read_records(self):
+    def read_records(self) -> List[Dict[str, str]]:
+        """
+        Reads financial records from a file.
+
+        Returns:
+            List[Dict[str, str]]: A list of dictionaries representing financial records.
+        """
         records = []
         if os.path.exists(self.filename):
             with open(self.filename, "r") as file:
@@ -33,13 +59,25 @@ class FinancialManager:
         return records
 
     def write_records(self):
+        """
+        Writes financial records to a file.
+        """
         with open(self.filename, "w") as file:
             for record in self.records:
                 for key, value in record.items():
                     file.write(f"{key}: {value}\n")
                 file.write("\n")
 
-    def edit_record(self, record_id, new_date, new_amount, new_description):
+    def edit_record(self, record_id: str, new_date: str, new_amount: str, new_description: str):
+        """
+        Edits an existing financial record.
+
+        Args:
+            record_id (str): The ID of the record to be edited.
+            new_date (str): The new date for the record.
+            new_amount (str): The new amount for the record.
+            new_description (str): The new description for the record.
+        """
         for record in self.records:
             if record["ID"] == record_id:
                 record["Дата"] = new_date
@@ -48,6 +86,9 @@ class FinancialManager:
                 break
 
     def display_balance(self):
+        """
+        Displays the current balance.
+        """
         total_income = sum(
             float(record["Сумма"])
             for record in self.records
@@ -63,7 +104,16 @@ class FinancialManager:
         print(f"Доходы: {total_income}")
         print(f"Расходы: {total_expense}")
 
-    def add_expense(self, date, amount, description, last_id):
+    def add_expense(self, date: str, amount: str, description: str, last_id: int):
+        """
+        Adds a new expense record.
+
+        Args:
+            date (str): The date of the expense.
+            amount (str): The amount of the expense.
+            description (str): The description of the expense.
+            last_id (int): The ID of the last record.
+        """
         new_record = {
             "ID": str(last_id + 1),
             "Дата": date,
@@ -73,7 +123,16 @@ class FinancialManager:
         }
         self.records.append(new_record)
 
-    def add_income(self, date, amount, description, last_id):
+    def add_income(self, date: str, amount: str, description: str, last_id: int):
+        """
+        Adds a new income record.
+
+        Args:
+            date (str): The date of the income.
+            amount (str): The amount of the income.
+            description (str): The description of the income.
+            last_id (int): The ID of the last record.
+        """
         new_record = {
             "ID": str(last_id + 1),
             "Дата": date,
@@ -83,22 +142,70 @@ class FinancialManager:
         }
         self.records.append(new_record)
 
-    def search_by_category(self, category):
+    def search_by_category(self, category: str) -> List[Dict[str, str]]:
+        """
+        Searches for records by category.
+
+        Args:
+            category (str): The category to search for.
+
+        Returns:
+            List[Dict[str, str]]: A list of matching records.
+        """
         return [record for record in self.records if record["Категория"] == category]
 
-    def search_by_description(self, description):
+    def search_by_description(self, description: str) -> List[Dict[str, str]]:
+        """
+        Searches for records by description.
+
+        Args:
+            description (str): The description to search for.
+
+        Returns:
+            List[Dict[str, str]]: A list of matching records.
+        """
         return [record for record in self.records if description in record["Описание"]]
 
-    def search_by_date(self, date):
+    def search_by_date(self, date: str) -> List[Dict[str, str]]:
+        """
+        Searches for records by date.
+
+        Args:
+            date (str): The date to search for.
+
+        Returns:
+            List[Dict[str, str]]: A list of matching records.
+        """
         return [record for record in self.records if record["Дата"] == date]
 
-    def search_by_amount(self, amount):
+    def search_by_amount(self, amount: float) -> List[Dict[str, str]]:
+        """
+        Searches for records by amount.
+
+        Args:
+            amount (float): The amount to search for.
+
+        Returns:
+            List[Dict[str, str]]: A list of matching records.
+        """
         return [record for record in self.records if float(record["Сумма"]) == amount]
 
-    def get_last_id(self):
+    def get_last_id(self) -> int:
+        """
+        Gets the ID of the last record.
+
+        Returns:
+            int: The ID of the last record.
+        """
         return max(int(record["ID"]) for record in self.records) if self.records else 0
 
     def execute_command(self, args):
+        """
+        Executes a command based on the provided arguments.
+
+        Args:
+            args: The parsed command-line arguments.
+        """
         last_id = self.get_last_id()
         if args.show:
             self.display_balance()
@@ -129,7 +236,13 @@ class FinancialManager:
             self.edit_record(record_id, new_date, new_amount, new_description)
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """
+    Parses command-line arguments.
+
+    Returns:
+        argparse.Namespace: The parsed arguments.
+    """
     parser = argparse.ArgumentParser(description="Личный финансовый кошелек")
     parser.add_argument("--show", action="store_true", help="Показать текущий баланс")
     parser.add_argument(

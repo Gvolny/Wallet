@@ -2,8 +2,6 @@ import unittest
 from unittest.mock import patch
 import os
 from io import StringIO
-import tempfile
-import sys
 
 from main import FinancialManager
 
