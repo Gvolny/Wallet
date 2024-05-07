@@ -26,7 +26,7 @@ This project provides a command-line interface (CLI) for managing personal finan
 
 To run the program, execute the main script:
 
-`python main.py [options]`
+`python wallet.py [options]`
 
 Options:
 - `--show`: Display current balance

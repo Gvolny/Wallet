@@ -16,7 +16,9 @@ class FinancialRecord:
         description (str): A description of the transaction.
     """
 
-    def __init__(self, record_id: str, date: str, category: str, amount: str, description: str):
+    def __init__(
+        self, record_id: str, date: str, category: str, amount: str, description: str
+    ):
         self.record_id = record_id
         self.date = date
         self.category = category
@@ -68,7 +70,9 @@ class FinancialManager:
                     file.write(f"{key}: {value}\n")
                 file.write("\n")
 
-    def edit_record(self, record_id: str, new_date: str, new_amount: str, new_description: str):
+    def edit_record(
+        self, record_id: str, new_date: str, new_amount: str, new_description: str
+    ):
         """
         Edits an existing financial record.
 

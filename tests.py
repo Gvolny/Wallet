@@ -3,7 +3,7 @@ from unittest.mock import patch
 import os
 from io import StringIO
 
-from main import FinancialManager
+from wallet import FinancialManager
 
 
 class TestFinancialManager(unittest.TestCase):
