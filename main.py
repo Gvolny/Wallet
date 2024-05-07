@@ -39,7 +39,7 @@ class FinancialManager:
                     file.write(f"{key}: {value}\n")
                 file.write("\n")
 
-    def edit(self, record_id, new_date, new_amount, new_description):
+    def edit_record(self, record_id, new_date, new_amount, new_description):
         for record in self.records:
             if record["ID"] == record_id:
                 record["Дата"] = new_date
@@ -95,6 +95,39 @@ class FinancialManager:
     def search_by_amount(self, amount):
         return [record for record in self.records if float(record["Сумма"]) == amount]
 
+    def get_last_id(self):
+        return max(int(record["ID"]) for record in self.records) if self.records else 0
+
+    def execute_command(self, args):
+        last_id = self.get_last_id()
+        if args.show:
+            self.display_balance()
+        elif args.add_expense:
+            date, amount, description = args.add_expense
+            self.add_expense(date, amount, description, last_id)
+        elif args.add_income:
+            date, amount, description = args.add_income
+            self.add_income(date, amount, description, last_id)
+        elif args.search_category:
+            category_results = self.search_by_category(args.search_category)
+            for result in category_results:
+                print(result)
+        elif args.search_date:
+            date_results = self.search_by_date(args.search_date)
+            for result in date_results:
+                print(result)
+        elif args.search_amount:
+            amount_results = self.search_by_amount(float(args.search_amount))
+            for result in amount_results:
+                print(result)
+        elif args.search_description:
+            description_results = self.search_by_description(args.search_description)
+            for result in description_results:
+                print(result)
+        elif args.edit:
+            record_id, new_date, new_amount, new_description = args.edit
+            self.edit_record(record_id, new_date, new_amount, new_description)
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Личный финансовый кошелек")
@@ -145,48 +178,16 @@ def parse_args():
     return parser.parse_args()
 
 
-def execute_command(args, financial_manager, last_id):
-    if args.show:
-        financial_manager.display_balance()
-    elif args.add_expense:
-        date, amount, description = args.add_expense
-        financial_manager.add_expense(date, amount, description, last_id)
-    elif args.add_income:
-        date, amount, description = args.add_income
-        financial_manager.add_income(date, amount, description, last_id)
-    elif args.search_category:
-        category_results = financial_manager.search_by_category(args.search_category)
-        for result in category_results:
-            print(result)
-    elif args.search_date:
-        date_results = financial_manager.search_by_date(args.search_date)
-        for result in date_results:
-            print(result)
-    elif args.search_amount:
-        amount_results = financial_manager.search_by_amount(float(args.search_amount))
-        for result in amount_results:
-            print(result)
-    elif args.search_description:
-        description_results = financial_manager.search_by_description(
-            args.search_description
-        )
-        for result in description_results:
-            print(result)
-    elif args.edit:
-        record_id, new_date, new_amount, new_description = args.edit
-        financial_manager.edit(record_id, new_date, new_amount, new_description)
-
-
 def main():
+    """
+    A function that executes the main logic of the program.
+    This function initializes a FinancialManager object with a given filename,
+    parses command line arguments, executes a command based on the arguments, and writes records to a file.
+    """
     filename = "finances.txt"
     financial_manager = FinancialManager(filename)
     args = parse_args()
-    last_id = (
-        max(int(record["ID"]) for record in financial_manager.records)
-        if financial_manager.records
-        else 0
-    )
-    execute_command(args, financial_manager, last_id)
+    financial_manager.execute_command(args)
     financial_manager.write_records()
 
 
