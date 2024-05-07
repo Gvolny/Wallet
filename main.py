@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 
+
 class FinancialRecord:
     def __init__(self, record_id, date, category, amount, description):
         self.record_id = record_id
@@ -9,6 +10,7 @@ class FinancialRecord:
         self.category = category
         self.amount = amount
         self.description = description
+
 
 class FinancialManager:
     def __init__(self, filename):
@@ -37,7 +39,7 @@ class FinancialManager:
                     file.write(f"{key}: {value}\n")
                 file.write("\n")
 
-    def edit_record(self, record_id, new_date, new_amount, new_description):
+    def edit(self, record_id, new_date, new_amount, new_description):
         for record in self.records:
             if record["ID"] == record_id:
                 record["Дата"] = new_date
@@ -47,10 +49,14 @@ class FinancialManager:
 
     def display_balance(self):
         total_income = sum(
-            float(record["Сумма"]) for record in self.records if record["Категория"] == "Доход"
+            float(record["Сумма"])
+            for record in self.records
+            if record["Категория"] == "Доход"
         )
         total_expense = sum(
-            float(record["Сумма"]) for record in self.records if record["Категория"] == "Расход"
+            float(record["Сумма"])
+            for record in self.records
+            if record["Категория"] == "Расход"
         )
         balance = total_income - total_expense
         print(f"Текущий баланс: {balance}")
@@ -126,7 +132,7 @@ def parse_args():
         help="Поиск записей по описанию",
     )
     parser.add_argument(
-        "--edit-record",
+        "--edit",
         nargs=4,
         metavar=("record_id", "new_date", "new_amount", "new_description"),
         help="Изменить существующую запись о доходе или расходе",
@@ -161,21 +167,28 @@ def execute_command(args, financial_manager, last_id):
         for result in amount_results:
             print(result)
     elif args.search_description:
-        description_results = financial_manager.search_by_description(args.search_description)
+        description_results = financial_manager.search_by_description(
+            args.search_description
+        )
         for result in description_results:
             print(result)
-    elif args.edit_record:
-        record_id, new_date, new_amount, new_description = args.edit_record
-        financial_manager.edit_record(record_id, new_date, new_amount, new_description)
+    elif args.edit:
+        record_id, new_date, new_amount, new_description = args.edit
+        financial_manager.edit(record_id, new_date, new_amount, new_description)
 
 
 def main():
     filename = "finances.txt"
     financial_manager = FinancialManager(filename)
     args = parse_args()
-    last_id = max(int(record["ID"]) for record in financial_manager.records) if financial_manager.records else 0
+    last_id = (
+        max(int(record["ID"]) for record in financial_manager.records)
+        if financial_manager.records
+        else 0
+    )
     execute_command(args, financial_manager, last_id)
     financial_manager.write_records()
+
 
 if __name__ == "__main__":
     main()
