@@ -20,7 +20,8 @@ This project provides a command-line interface (CLI) for managing personal finan
 
 2. Navigate to the project directory:
 `cd Wallet`
-
+3. Install the required packages: `pipenv install`
+4. Activate the virtual environment: `pipenv shell`
 
 ## Usage
 
