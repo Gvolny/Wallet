@@ -91,7 +91,7 @@ class FinancialManager:
         for record in self.records:
             if record["ID"] == record_id:
                 record["Дата"] = new_date
-                record["Сумма"] = str(new_amount)
+                record["Сумма"] = new_amount
                 record["Описание"] = new_description
                 break
 
@@ -125,7 +125,7 @@ class FinancialManager:
             last_id (int): The ID of the last record.
         """
         new_record = {
-            "ID": str(last_id + 1),
+            "ID": last_id + 1,
             "Дата": date,
             "Категория": "Расход",
             "Сумма": f"{amount:.2f}",
@@ -144,7 +144,7 @@ class FinancialManager:
             last_id (int): The ID of the last record.
         """
         new_record = {
-            "ID": str(last_id + 1),
+            "ID": last_id + 1,
             "Дата": date,
             "Категория": "Доход",
             "Сумма": f"{amount:.2f}",
