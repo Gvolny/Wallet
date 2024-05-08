@@ -114,7 +114,7 @@ class FinancialManager:
         print(f"Доходы: {total_income:.2f}")
         print(f"Расходы: {total_expense:.2f}")
 
-    def add_expense(self, date: str, amount: Decimal, description: str, last_id: int):
+    def add_expense(self, date: str, amount: Decimal, description: str):
         """
         Adds a new expense record.
 
@@ -122,10 +122,9 @@ class FinancialManager:
             date (str): The date of the expense.
             amount (Decimal): The amount of the expense.
             description (str): The description of the expense.
-            last_id (int): The ID of the last record.
         """
         new_record = {
-            "ID": last_id + 1,
+            "ID": self.get_last_id() + 1,
             "Дата": date,
             "Категория": "Расход",
             "Сумма": f"{amount:.2f}",
@@ -133,7 +132,7 @@ class FinancialManager:
         }
         self.records.append(new_record)
 
-    def add_income(self, date: str, amount: Decimal, description: str, last_id: int):
+    def add_income(self, date: str, amount: Decimal, description: str):
         """
         Adds a new income record.
 
@@ -141,10 +140,9 @@ class FinancialManager:
             date (str): The date of the income.
             amount (Decimal): The amount of the income.
             description (str): The description of the income.
-            last_id (int): The ID of the last record.
         """
         new_record = {
-            "ID": last_id + 1,
+            "ID": self.get_last_id() + 1,
             "Дата": date,
             "Категория": "Доход",
             "Сумма": f"{amount:.2f}",
@@ -221,10 +219,10 @@ class FinancialManager:
             self.display_balance()
         elif args.add_expense:
             date, amount, description = args.add_expense
-            self.add_expense(date, Decimal(amount), description, last_id)
+            self.add_expense(date, Decimal(amount), description)
         elif args.add_income:
             date, amount, description = args.add_income
-            self.add_income(date, Decimal(amount), description, last_id)
+            self.add_income(date, Decimal(amount), description)
         elif args.search_category:
             category_results = self.search_by_category(args.search_category)
             for result in category_results:

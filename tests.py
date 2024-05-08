@@ -74,17 +74,15 @@ class TestFinancialManager(unittest.TestCase):
 
     def test_add_expense(self):
         # Test adding a new expense record
-        last_id = self.financial_manager.get_last_id()
         self.financial_manager.add_expense(
-            "2024-05-10", Decimal("200.00"), "Test expense", last_id
+            "2024-05-10", Decimal("200.00"), "Test expense"
         )
         self.assertEqual(len(self.financial_manager.records), 1)
 
     def test_add_income(self):
         # Test adding a new income record
-        last_id = self.financial_manager.get_last_id()
         self.financial_manager.add_income(
-            "2024-05-10", Decimal("500.00"), "Test income", last_id
+            "2024-05-10", Decimal("500.00"), "Test income"
         )
         self.assertEqual(len(self.financial_manager.records), 1)
 
