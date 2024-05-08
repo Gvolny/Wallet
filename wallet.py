@@ -45,7 +45,7 @@ class FinancialManager:
         self.filename = filename
         self.records = self.read_records()
 
-    def read_records(self) -> List[Dict[str, str]]:
+    def read_records(self) -> List[Dict[str, str | Decimal]]:
         """
         Reads financial records from a file.
 
@@ -214,7 +214,6 @@ class FinancialManager:
         Args:
             args: The parsed command-line arguments.
         """
-        last_id = self.get_last_id()
         if args.show:
             self.display_balance()
         elif args.add_expense:
