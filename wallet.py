@@ -1,11 +1,9 @@
 import argparse
 import os
 import sys
-from decimal import Decimal, getcontext
+from decimal import Decimal
 from typing import List, Dict
 
-# Set decimal precision globally
-getcontext().prec = 2
 
 class FinancialRecord:
     """
@@ -20,7 +18,12 @@ class FinancialRecord:
     """
 
     def __init__(
-        self, record_id: str, date: str, category: str, amount: Decimal, description: str
+        self,
+        record_id: str,
+        date: str,
+        category: str,
+        amount: Decimal,
+        description: str,
     ):
         self.record_id = record_id
         self.date = date

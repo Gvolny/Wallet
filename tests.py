@@ -75,13 +75,17 @@ class TestFinancialManager(unittest.TestCase):
     def test_add_expense(self):
         # Test adding a new expense record
         last_id = self.financial_manager.get_last_id()
-        self.financial_manager.add_expense("2024-05-10", Decimal("200.00"), "Test expense", last_id)
+        self.financial_manager.add_expense(
+            "2024-05-10", Decimal("200.00"), "Test expense", last_id
+        )
         self.assertEqual(len(self.financial_manager.records), 1)
 
     def test_add_income(self):
         # Test adding a new income record
         last_id = self.financial_manager.get_last_id()
-        self.financial_manager.add_income("2024-05-10", Decimal("500.00"), "Test income", last_id)
+        self.financial_manager.add_income(
+            "2024-05-10", Decimal("500.00"), "Test income", last_id
+        )
         self.assertEqual(len(self.financial_manager.records), 1)
 
     def test_search_by_category(self):
@@ -189,14 +193,14 @@ class TestFinancialManager(unittest.TestCase):
                 "ID": "1",
                 "Дата": "2024-01-01",
                 "Категория": "Доход",
-                "Сумма": Decimal("1000.00"),
+                "Сумма": Decimal("1001.20"),
                 "Описание": "Test income 1",
             },
             {
                 "ID": "2",
                 "Дата": "2024-01-02",
                 "Категория": "Расход",
-                "Сумма": Decimal("500.00"),
+                "Сумма": Decimal("542.10"),
                 "Описание": "Test expense 1",
             },
         ]
@@ -204,11 +208,11 @@ class TestFinancialManager(unittest.TestCase):
 
         # Test editing a record
         self.financial_manager.edit_record(
-            "1", "2024-01-01", Decimal("1500.00"), "Updated income 1"
+            "1", "2024-01-01", Decimal("1543.30"), "Updated income 1"
         )
         edited_record = self.financial_manager.records[0]
         edited_amount = Decimal(edited_record["Сумма"])  # Convert to Decimal
-        self.assertEqual(edited_amount, Decimal("1500.00"))
+        self.assertEqual(edited_amount, Decimal("1543.30"))
         self.assertEqual(edited_record["Описание"], "Updated income 1")
 
     @patch("sys.stdout", new_callable=StringIO)
