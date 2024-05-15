@@ -4,7 +4,7 @@ import os
 from io import StringIO
 from decimal import Decimal
 
-from wallet import FinancialManager
+from financial_manager import FinancialManager
 
 
 class TestFinancialManager(unittest.TestCase):
